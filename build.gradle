@@ -1,11 +1,12 @@
 plugins {
 	id 'java-library'
+	id 'maven-publish'
 	id 'org.springframework.boot' version '3.3.5' apply false
 	id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.bibrary'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
 	toolchain {
@@ -37,6 +38,20 @@ dependencyManagement {
 	}
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+publishing {
+	repositories {
+		maven {
+			name = "GitHubPackages"
+			url = uri("https://maven.pkg.github.com/DameerGamlet/bibrary-java-plugin")
+			credentials {
+				username = project.findProperty("user") ?: System.getenv("USERNAME")
+				password = project.findProperty("token") ?: System.getenv("TOKEN")
+			}
+		}
+	}
+	publications {
+		gpr(MavenPublication) {
+			from(components.java)
+		}
+	}
 }
